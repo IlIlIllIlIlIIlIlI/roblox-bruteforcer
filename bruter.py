@@ -34,6 +34,7 @@ def login(credentials, proxy):
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option('useAutomationExtension', False)
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     formatted_proxy = formatProxy(proxy)
     proxy_auth = ":".join(formatted_proxy.split("@")[0].split(":"))
@@ -101,9 +102,7 @@ def login(credentials, proxy):
     driver.quit()
 
 if __name__ == "__main__":
-    with open("config.json", "r") as file:
-        data = json.load(file)
-        num_threads = int(data["threads"])
+    num_threads = threadCount = int(input("Threads: "))
 
     with open("combos.txt", "r") as file:
         lines = file.readlines()
