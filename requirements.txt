@@ -1,3 +1,2 @@
-pip install selenium
-pip install requests
-pip install selenium_authenticated_proxy
+selenium
+requests
