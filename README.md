@@ -1,8 +1,8 @@
 # roblox-bruteforcer
 i got bored. this took an hour.
 
-this is meant for education purposes only. <br>
-captcha solvers are not supported because i dont wanna bother.
+this is meant for educational purposes only. <br>
 
 [+] Webhook support <br>
-[+] Proxy support (required)
+[+] Proxy support (required) <br>
+[+] Capsolver support
