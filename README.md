@@ -1,5 +1,6 @@
 # roblox-bruteforcer
-i got bored. this took an hour.
+i got bored. this took an hour.<br>
+made entirely in selenium.
 
 this is meant for educational purposes only. <br>
 
