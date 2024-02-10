@@ -1,3 +1,4 @@
 {
-    "hook": "https://discordapp.com/api/webhooks/000000000000000000/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    "hook": "https://discordapp.com/api/webhooks/000000000000000000/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "apiKey": "CAP-XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 }
