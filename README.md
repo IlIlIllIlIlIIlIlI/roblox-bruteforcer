@@ -9,3 +9,4 @@ this is meant for educational purposes only. <br>
 [+] Capsolver support<br>
 
 CURRENTLY BROKEN, WAIT FOR A NEW UPDATE
+^^ FOUND FIX, WILL BE UPDATED SOON
