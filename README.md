@@ -8,5 +8,5 @@ this is meant for educational purposes only. <br>
 [+] Proxy support (required) <br>
 [+] Capsolver support<br>
 
-CURRENTLY BROKEN, WAIT FOR A NEW UPDATE
+CURRENTLY BROKEN, WAIT FOR A NEW UPDATE<br>
 ^^ FOUND FIX, WILL BE UPDATED SOON
